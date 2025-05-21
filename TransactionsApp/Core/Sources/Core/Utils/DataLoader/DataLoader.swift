@@ -7,18 +7,18 @@
 
 import Foundation
 
-enum DataLoaderError: Error {
+public enum DataLoaderError: Error {
     case fileNotFound
     case invalidData
     case decodingError
 }
 
-enum DataLoader {
-    static func loadTransactions() throws -> [TransactionModel] {
+public enum DataLoader {
+    public static func loadTransactions() throws -> [TransactionModel] {
         try loadData(fileName: Constants.FileName.transactions)
     }
     
-    static func loadExchangeRates() throws -> [ExchangeRateModel] {
+    public static func loadExchangeRates() throws -> [ExchangeRateModel] {
         try loadData(fileName: Constants.FileName.rates)
     }
 }

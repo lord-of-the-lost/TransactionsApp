@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct Transaction {
-    let amount: Double
-    let currency: String
-    let sku: String
+public struct Transaction {
+    public let amount: Double
+    public let currency: String
+    public let sku: String
     
-    init?(_ model: TransactionModel) {
+    public init?(_ model: TransactionModel) {
         guard let amount = Double(model.amount) else {
             assertionFailure("Invalid amount in model: TransactionModel")
             return nil

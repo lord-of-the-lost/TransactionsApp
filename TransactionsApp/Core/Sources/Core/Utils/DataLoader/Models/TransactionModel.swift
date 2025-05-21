@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct TransactionModel: Decodable {
+public struct TransactionModel: Decodable {
     let amount: String
     let currency: String
     let sku: String

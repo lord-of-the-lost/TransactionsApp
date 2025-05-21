@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import ProductList
 
 @main
 final class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +17,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = ViewController()
+        window?.rootViewController = ProductsListAssembly.assembly()
         window?.makeKeyAndVisible()
         
         return true

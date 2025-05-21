@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		60BEC9AA2DDE30F700F68A62 /* Core in Frameworks */ = {isa = PBXBuildFile; productRef = 60BEC9A92DDE30F700F68A62 /* Core */; };
+		60BEC9AD2DDE30FF00F68A62 /* ProductList in Frameworks */ = {isa = PBXBuildFile; productRef = 60BEC9AC2DDE30FF00F68A62 /* ProductList */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		60073FF52DDD112400AB676F /* TransactionsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TransactionsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -14,6 +19,7 @@
 		600740072DDD112500AB676F /* Exceptions for "TransactionsApp" folder in "TransactionsApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				ProductList,
 				Resources/Info.plist,
 			);
 			target = 60073FF42DDD112400AB676F /* TransactionsApp */;
@@ -36,6 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				60BEC9AD2DDE30FF00F68A62 /* ProductList in Frameworks */,
+				60BEC9AA2DDE30F700F68A62 /* Core in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -78,6 +86,8 @@
 			);
 			name = TransactionsApp;
 			packageProductDependencies = (
+				60BEC9A92DDE30F700F68A62 /* Core */,
+				60BEC9AC2DDE30FF00F68A62 /* ProductList */,
 			);
 			productName = TransactionsApp;
 			productReference = 60073FF52DDD112400AB676F /* TransactionsApp.app */;
@@ -107,6 +117,10 @@
 			);
 			mainGroup = 60073FEC2DDD112400AB676F;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				60BEC9A82DDE30F700F68A62 /* XCLocalSwiftPackageReference "TransactionsApp/Core" */,
+				60BEC9AB2DDE30FF00F68A62 /* XCLocalSwiftPackageReference "TransactionsApp/ProductList" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 60073FF62DDD112400AB676F /* Products */;
 			projectDirPath = "";
@@ -152,6 +166,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -179,6 +194,7 @@
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -252,6 +268,8 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -307,6 +325,8 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -333,6 +353,28 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		60BEC9A82DDE30F700F68A62 /* XCLocalSwiftPackageReference "TransactionsApp/Core" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TransactionsApp/Core;
+		};
+		60BEC9AB2DDE30FF00F68A62 /* XCLocalSwiftPackageReference "TransactionsApp/ProductList" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = TransactionsApp/ProductList;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		60BEC9A92DDE30F700F68A62 /* Core */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Core;
+		};
+		60BEC9AC2DDE30FF00F68A62 /* ProductList */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ProductList;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 60073FED2DDD112400AB676F /* Project object */;
 }

@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct ExchangeRate {
-    let from: String
-    let to: String
-    let rate: Double
+public struct ExchangeRate {
+    public let from: String
+    public let to: String
+    public let rate: Double
     
-    init?(_ model: ExchangeRateModel) {
+    public init?(_ model: ExchangeRateModel) {
         guard let rate = Double(model.rate) else {
             assertionFailure("Invalid rate in model: ExchangeRateModel")
             return nil
