@@ -8,12 +8,17 @@
 import UIKit
 
 final class ViewController: UIViewController {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .red
+        do {
+            dump(try DataLoader.loadTransactions())
+            dump(try DataLoader.loadExchangeRates())
+        } catch {
+            print(error)
+        }
     }
-
-
+    
 }
 
