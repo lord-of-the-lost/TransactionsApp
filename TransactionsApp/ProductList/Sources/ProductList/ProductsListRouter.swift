@@ -1,15 +1,11 @@
 //
 //  ProductsListPresenter.swift
-//  TransactionsApp
+//  ProductList
 //
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
 import UIKit
-
-protocol ProductsListRouterProtocol: AnyObject {
-    func showTransactions(for sku: String)
-}
 
 final class ProductsListRouter {
     weak var viewController: UIViewController?

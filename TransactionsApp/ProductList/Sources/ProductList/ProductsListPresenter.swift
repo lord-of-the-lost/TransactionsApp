@@ -1,6 +1,6 @@
 //
 //  ProductsListPresenter.swift
-//  TransactionsApp
+//  ProductList
 //
 //  Created by Николай Игнатов on 21.05.2025.
 //
@@ -8,17 +8,11 @@
 import Core
 import Foundation
 
-protocol ProductsListPresenterProtocol: AnyObject {
-    func setupView(_ view: ProductsListViewProtocol)
-    func viewDidLoad()
-    func didSelectProduct(_ sku: String)
-}
-
 final class ProductsListPresenter {
     private weak var view: ProductsListViewProtocol?
     private let router: ProductsListRouterProtocol
     private var transactions: [Transaction] = []
-    
+
     init(router: ProductsListRouterProtocol) {
         self.router = router
     }
@@ -29,15 +23,15 @@ extension ProductsListPresenter: ProductsListPresenterProtocol {
     func setupView(_ view: ProductsListViewProtocol) {
         self.view = view
     }
-    
+
     func viewDidLoad() {
         loadTransactions()
     }
-    
+
     func didSelectProduct(_ sku: String) {
         router.showTransactions(for: sku)
     }
-} 
+}
 
 // MARK: - Private Methods
 private extension ProductsListPresenter {
@@ -52,12 +46,21 @@ private extension ProductsListPresenter {
     }
     
     func updateProductsList() {
-        var products: [String: Int] = [:]
-        
-        for transaction in transactions {
-            products[transaction.sku, default: 0] += 1
-        }
-        
+        let products = makeProductList(from: transactions)
         view?.updateProductsList(products)
     }
+    
+    func makeProductList(from transactions: [Transaction]) -> [ProductItem] {
+        var productMap: [String: Int] = [:]
+        
+        for transaction in transactions {
+            productMap[transaction.sku, default: 0] += 1
+        }
+        
+        return productMap
+            .map { ProductItem(sku: $0.key, count: "\($0.value) transactions") }
+            .sorted { $0.sku.localizedCompare($1.sku) == .orderedAscending }
+    }
 }
+
+
