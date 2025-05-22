@@ -20,6 +20,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				ProductList,
+				ProductTransactions,
 				Resources/Info.plist,
 			);
 			target = 60073FF42DDD112400AB676F /* TransactionsApp */;
