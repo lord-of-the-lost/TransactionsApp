@@ -20,7 +20,7 @@ public class BaseCell: UITableViewCell {
         let label = UILabel()
         label.textAlignment = .right
         label.textColor = .gray
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: Constants.FontSize.rightLabel)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -43,7 +43,6 @@ public class BaseCell: UITableViewCell {
         accessoryType = .none
     }
     
-    // MARK: - Configure
     public func configure(with model: BaseCellViewModel) {
         leftText.text = model.leftText
         rightText.text = model.rightText
@@ -51,18 +50,14 @@ public class BaseCell: UITableViewCell {
     }
 }
 
-// MARK: - BaseCellViewModel
+// MARK: - ViewModel
 extension BaseCell {
     public struct BaseCellViewModel {
         let leftText: String
         let rightText: String
         let needDisclosureIndicator: Bool
         
-        public init(
-            leftText: String,
-            rightText: String,
-            needDisclosureIndicator: Bool = false
-        ) {
+        public init(leftText: String, rightText: String, needDisclosureIndicator: Bool = false) {
             self.leftText = leftText
             self.rightText = rightText
             self.needDisclosureIndicator = needDisclosureIndicator
@@ -79,14 +74,29 @@ private extension BaseCell {
     
     func setupConstraints() {
         NSLayoutConstraint.activate([
-            rightText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -32),
-            rightText.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
-            rightText.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8),
-
-            leftText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            leftText.trailingAnchor.constraint(lessThanOrEqualTo: rightText.leadingAnchor, constant: -8),
-            leftText.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: 8),
-            leftText.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -8)
+            leftText.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: Constants.Constraints.horizontalPadding),
+            leftText.trailingAnchor.constraint(lessThanOrEqualTo: rightText.leadingAnchor, constant: Constants.Constraints.interItemSpacing.negative),
+            leftText.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: Constants.Constraints.verticalPadding),
+            leftText.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: Constants.Constraints.verticalPadding.negative),
+            
+            rightText.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: Constants.Constraints.horizontalPadding.negative),
+            rightText.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: Constants.Constraints.verticalPadding),
+            rightText.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: Constants.Constraints.verticalPadding.negative)
         ])
+    }
+}
+
+// MARK: - Constants
+private extension BaseCell {
+    enum Constants {
+        enum Constraints {
+            static let horizontalPadding: CGFloat = 16
+            static let verticalPadding: CGFloat = 8
+            static let interItemSpacing: CGFloat = 8
+        }
+        
+        enum FontSize {
+            static let rightLabel: CGFloat = 14
+        }
     }
 }
