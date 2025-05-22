@@ -7,6 +7,6 @@
 
 import Foundation
 
-extension SignedNumeric {
+public extension SignedNumeric {
     var negative: Self { -self }
 }

@@ -12,12 +12,16 @@ let package = Package(
             targets: ["ProductList"]),
     ],
     dependencies: [
-        .package(path: "../Core")
+        .package(path: "../Core"),
+        .package(path: "../ProductTransactions")
     ],
     targets: [
         .target(
             name: "ProductList",
-            dependencies: [.product(name: "Core", package: "Core")]
+            dependencies: [
+                .product(name: "Core", package: "Core"),
+                .product(name: "ProductTransactions", package: "ProductTransactions")
+            ]
         )
     ]
 )

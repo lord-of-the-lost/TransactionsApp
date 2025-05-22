@@ -37,8 +37,7 @@ extension ProductsListPresenter: ProductsListPresenterProtocol {
 private extension ProductsListPresenter {
     func loadTransactions() {
         do {
-            let model = try DataLoader.loadTransactions()
-            transactions = model.compactMap { Transaction($0) }
+            transactions = try DataLoader.loadTransactions().compactMap(Transaction.init)
             updateProductsList()
         } catch {
             view?.showError(error)
