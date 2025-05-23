@@ -10,7 +10,7 @@ import UIKit
 
 public class ProductsListViewController: UIViewController {
     private let presenter: ProductsListPresenterProtocol
-    private var products: [ProductItem] = []
+    private var products: [ProductItemViewModel] = []
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
@@ -70,14 +70,13 @@ extension ProductsListViewController: UITableViewDataSource {
 extension ProductsListViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let product = products[safe: indexPath.row] else { return }
-        presenter.didSelectProduct(product.sku)
+        presenter.didSelectProduct(at: indexPath.row)
     }
 }
 
 // MARK: - ProductsListViewProtocol
 extension ProductsListViewController: ProductsListViewProtocol {
-    func updateProductsList(_ products: [ProductItem]) {
+    func updateProductsList(_ products: [ProductItemViewModel]) {
         self.products = products
         tableView.reloadData()
     }

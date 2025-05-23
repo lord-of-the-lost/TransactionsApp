@@ -5,6 +5,7 @@
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
+import Core
 import ProductTransactions
 import UIKit
 
@@ -14,8 +15,8 @@ final class ProductsListRouter {
 
 // MARK: - ProductsListRouterProtocol
 extension ProductsListRouter: ProductsListRouterProtocol {
-    func showTransactions(for sku: String) {
-        let controller = ProductTransactionsAssembly.assembly(sku: sku)
+    func showTransactions(for product: ProductItem) {
+        let controller = ProductTransactionsAssembly.assembly(product: product)
         viewController?.navigationController?.pushViewController(controller, animated: true)
     }
 } 

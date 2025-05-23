@@ -6,12 +6,11 @@
 //
 
 import Core
-import Foundation
 
 final class ProductsListPresenter {
     private weak var view: ProductsListViewProtocol?
     private let router: ProductsListRouterProtocol
-    private var transactions: [Transaction] = []
+    private var products: [ProductItem] = []
 
     init(router: ProductsListRouterProtocol) {
         self.router = router
@@ -28,38 +27,36 @@ extension ProductsListPresenter: ProductsListPresenterProtocol {
         loadTransactions()
     }
 
-    func didSelectProduct(_ sku: String) {
-        router.showTransactions(for: sku)
+    func didSelectProduct(at index: Int) {
+        guard let product = products[safe: index] else { return }
+        router.showTransactions(for: product)
     }
 }
 
 // MARK: - Private Methods
 private extension ProductsListPresenter {
     func loadTransactions() {
-        do {
-            transactions = try DataLoader.loadTransactions().compactMap(Transaction.init)
-            updateProductsList()
-        } catch {
-            view?.showError(error)
+        DataLoader.loadTransactions { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let models):
+                let transactions = models.compactMap(Transaction.init)
+                self.products = groupTransactionsBySKU(transactions)
+                self.updateProductsList()
+            case .failure(let error):
+                self.view?.showError(error)
+            }
         }
     }
-    
-    func updateProductsList() {
-        let products = makeProductList(from: transactions)
-        view?.updateProductsList(products)
-    }
-    
-    func makeProductList(from transactions: [Transaction]) -> [ProductItem] {
-        var productMap: [String: Int] = [:]
-        
-        for transaction in transactions {
-            productMap[transaction.sku, default: 0] += 1
-        }
-        
-        return productMap
-            .map { ProductItem(sku: $0.key, count: "\($0.value) transactions") }
+
+    func groupTransactionsBySKU(_ transactions: [Transaction]) -> [ProductItem] {
+        let grouped = Dictionary(grouping: transactions, by: { $0.sku })
+        return grouped.map { ProductItem(sku: $0.key, transactions: $0.value) }
             .sorted { $0.sku.localizedCompare($1.sku) == .orderedAscending }
     }
+
+    func updateProductsList() {
+        let viewModels = products.map { ProductItemViewModel.init(from: $0) }
+        view?.updateProductsList(viewModels)
+    }
 }
-
-

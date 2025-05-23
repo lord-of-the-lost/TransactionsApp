@@ -5,8 +5,6 @@
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
-import Foundation
-
 public struct Transaction {
     public let amount: Double
     public let currency: String
