@@ -37,7 +37,7 @@ extension ProductTransactionsPresenter: ProductTransactionsPresenterProtocol {
 // MARK: - Private Methods
 private extension ProductTransactionsPresenter {
     typealias Product = ProductTransactionsViewModel.ProductTransactionItem
-    
+
     func loadData() {
         DataLoader.loadExchangeRates { [weak self] result in
             guard let self else { return }
@@ -50,30 +50,49 @@ private extension ProductTransactionsPresenter {
             }
         }
     }
-    
+
     func updateTransactions() {
-        let items = product.transactions.map { createViewModelItem(from: $0) }
+        let items = product.transactions.compactMap { createViewModelItem(from: $0) }
         let total = calculateTotal(from: items)
         let viewModel = createViewModel(with: items, total: total)
         view?.updateView(viewModel)
     }
-    
-    func createViewModelItem(from transaction: Transaction) -> Product {
-        let originalPrice = CurrencyFormatter.format(amount: transaction.amount, currency: transaction.currency)
-        let amountInGBP = CurrencyConverter.convertToGBP(amount: transaction.amount, currency: transaction.currency, rates: rates)
-        let convertedPrice = CurrencyFormatter.format(amount: amountInGBP, currency: Constants.gbpCurrencyCode)
-        return ProductTransactionsViewModel.ProductTransactionItem(originalPrice: originalPrice, convertedPrice: convertedPrice)
-    }
-    
-    func calculateTotal(from items: [Product]) -> Double {
-        items.reduce(0.0) {
-            $0 + CurrencyFormatter.extractAmount(from: $1.convertedPrice, currency: Constants.gbpCurrencyCode)
+
+    func createViewModelItem(from transaction: Transaction) -> Product? {
+        guard let currency = Currency(rawValue: transaction.currency) else {
+            assertionFailure("Unsupported currency: \(transaction.currency)")
+            return nil
         }
+
+        let originalMoney = Money(amount: transaction.amount, currency: currency)
+        let originalPrice = CurrencyFormatter.format(originalMoney)
+
+        let convertedMoney: Money
+        do {
+            convertedMoney = try CurrencyConverter.convert(originalMoney, to: .gbp, using: rates)
+        } catch {
+            assertionFailure("Conversion failed: \(error)")
+            return nil
+        }
+
+        let convertedPrice = CurrencyFormatter.format(convertedMoney)
+
+        return ProductTransactionsViewModel.ProductTransactionItem(
+            originalPrice: originalPrice,
+            convertedPrice: convertedPrice
+        )
     }
-    
+
+    func calculateTotal(from items: [Product]) -> Double {
+        items.compactMap {
+            CurrencyFormatter.extractAmount(from: $0.convertedPrice, currency: .gbp)
+        }.reduce(0, +)
+    }
+
     func createViewModel(with items: [Product], total: Double) -> ProductTransactionsViewModel {
         let title = String(format: Constants.transactionsTitleFormat, product.sku)
-        let sectionHeader = String(format: Constants.totalSectionHeaderFormat, CurrencyFormatter.format(amount: total, currency: Constants.gbpCurrencyCode))
+        let totalMoney = Money(amount: total, currency: .gbp)
+        let sectionHeader = String(format: Constants.totalSectionHeaderFormat, CurrencyFormatter.format(totalMoney))
         return ProductTransactionsViewModel(titleText: title, sectionHeader: sectionHeader, items: items)
     }
 }
@@ -81,7 +100,6 @@ private extension ProductTransactionsPresenter {
 // MARK: - Constants
 private extension ProductTransactionsPresenter {
     enum Constants {
-        static let gbpCurrencyCode = "GBP"
         static let transactionsTitleFormat = "Transactions for %@"
         static let totalSectionHeaderFormat = "Total: %@"
     }

@@ -5,60 +5,38 @@
 //  Created by Николай Игнатов on 22.05.2025.
 //
 
-/// Утилита для конвертации сумм из произвольной валюты в GBP с использованием списка обменных курсов.
 public enum CurrencyConverter {
-
-    /// Конвертирует сумму из указанной валюты в GBP.
-    ///
-    /// Алгоритм:
-    /// - Если валюта уже GBP, возвращается исходная сумма.
-    /// - Пытается найти прямой курс конвертации из `currency` в GBP.
-    /// - Если прямого курса нет, пытается найти обратный курс из GBP в `currency` и делит сумму на него.
-    /// - Если оба варианта не найдены, рекурсивно пытается конвертировать через промежуточные валюты.
-    /// - Если конвертация невозможна, возвращает 0.
-    ///
-    /// - Parameters:
-    ///   - amount: Сумма в исходной валюте.
-    ///   - currency: Код исходной валюты (ISO 4217).
-    ///   - rates: Массив доступных обменных курсов.
-    /// - Returns: Конвертированная сумма в GBP, или 0 при невозможности конвертации.
-    public static func convertToGBP(amount: Double, currency: String, rates: [ExchangeRate]) -> Double {
-        guard currency != "GBP" else { return amount }
-        
-        if let directRate = findDirectRate(from: currency, to: "GBP", rates: rates) {
-            return amount * directRate.rate
-        }
-        
-        if let reverseRate = findDirectRate(from: "GBP", to: currency, rates: rates) {
-            return amount / reverseRate.rate
-        }
-        
-        return convertViaIntermediate(amount: amount, from: currency, rates: rates)
+    public enum ConversionError: Error {
+        case rateNotFound
     }
-}
 
-// MARK: - Private Methods
-private extension CurrencyConverter {
-    /// Находит прямой обменный курс из одной валюты в другую.
-    private static func findDirectRate(from: String, to: String, rates: [ExchangeRate]) -> ExchangeRate? {
-        rates.first(where: { $0.from == from && $0.to == to })
-    }
-    
-    /// Пытается рекурсивно конвертировать сумму в GBP через промежуточные валюты.
-    ///
-    /// - Parameters:
-    ///   - amount: Сумма в исходной валюте.
-    ///   - from: Код исходной валюты.
-    ///   - rates: Массив доступных обменных курсов.
-    /// - Returns: Конвертированная сумма в GBP, либо 0, если конвертация невозможна.
-    private static func convertViaIntermediate(amount: Double, from: String, rates: [ExchangeRate]) -> Double {
-        for rate in rates where rate.from == from {
-            let convertedAmount = amount * rate.rate
-            let result = convertToGBP(amount: convertedAmount, currency: rate.to, rates: rates)
-            if result > 0 {
-                return result
+    public static func convert(_ money: Money, to target: Currency, using rates: [ExchangeRate]) throws -> Money {
+        guard money.currency != target else {
+            return money
+        }
+
+        // 1. Прямой курс
+        if let direct = rates.first(where: { $0.from == money.currency.rawValue && $0.to == target.rawValue }) {
+            return Money(amount: money.amount * direct.rate, currency: target)
+        }
+
+        // 2. Обратный курс
+        if let reverse = rates.first(where: { $0.from == target.rawValue && $0.to == money.currency.rawValue }) {
+            return Money(amount: money.amount / reverse.rate, currency: target)
+        }
+
+        // 3. Пробуем найти промежуточную валюту через 1 шаг
+        for intermediate in Currency.allCases where intermediate != money.currency && intermediate != target {
+            guard let toIntermediate = rates.first(where: { $0.from == money.currency.rawValue && $0.to == intermediate.rawValue }),
+                  let toTarget = rates.first(where: { $0.from == intermediate.rawValue && $0.to == target.rawValue }) else {
+                continue
             }
+
+            let intermediateAmount = money.amount * toIntermediate.rate
+            let finalAmount = intermediateAmount * toTarget.rate
+            return Money(amount: finalAmount, currency: target)
         }
-        return 0
+
+        throw ConversionError.rateNotFound
     }
 }
