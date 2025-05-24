@@ -20,14 +20,15 @@ public enum CurrencyFormatter {
         formatter.currencyCode = money.currency.rawValue
         formatter.locale = localeIdentifier
         formatter.usesGroupingSeparator = true
-        return formatter.string(from: NSNumber(value: money.amount)) ?? "\(money.currency.rawValue) \(money.amount)"
+
+        return formatter.string(from: money.amount as NSDecimalNumber) ?? "\(money.currency.rawValue) \(money.amount)"
     }
 
-    public static func extractAmount(from string: String, currency: Currency) -> Double? {
+    public static func extractAmount(from string: String, currency: Currency) -> Decimal? {
         let formatter = NumberFormatter()
         formatter.numberStyle = .currency
         formatter.currencyCode = currency.rawValue
         formatter.locale = localeIdentifier
-        return formatter.number(from: string)?.doubleValue
+        return formatter.number(from: string)?.decimalValue
     }
 }

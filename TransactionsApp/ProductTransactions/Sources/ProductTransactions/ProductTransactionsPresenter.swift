@@ -6,6 +6,7 @@
 //
 
 import Core
+import Foundation
 
 final class ProductTransactionsPresenter {
     private weak var view: ProductTransactionsViewProtocol?
@@ -53,18 +54,13 @@ private extension ProductTransactionsPresenter {
 
     func updateTransactions() {
         let items = product.transactions.compactMap { createViewModelItem(from: $0) }
-        let total = calculateTotal(from: items)
+        let total = calculateTotal(from: product.transactions)
         let viewModel = createViewModel(with: items, total: total)
         view?.updateView(viewModel)
     }
 
-    func createViewModelItem(from transaction: Transaction) -> Product? {
-        guard let currency = Currency(rawValue: transaction.currency) else {
-            assertionFailure("Unsupported currency: \(transaction.currency)")
-            return nil
-        }
-
-        let originalMoney = Money(amount: transaction.amount, currency: currency)
+    func createViewModelItem(from transaction: Transaction) -> ProductTransactionsViewModel.ProductTransactionItem? {
+        let originalMoney = transaction.money
         let originalPrice = CurrencyFormatter.format(originalMoney)
 
         let convertedMoney: Money
@@ -83,13 +79,14 @@ private extension ProductTransactionsPresenter {
         )
     }
 
-    func calculateTotal(from items: [Product]) -> Double {
-        items.compactMap {
-            CurrencyFormatter.extractAmount(from: $0.convertedPrice, currency: .gbp)
-        }.reduce(0, +)
+    func calculateTotal(from transactions: [Transaction]) -> Decimal {
+        transactions.compactMap { transaction in
+            try? CurrencyConverter.convert(transaction.money, to: .gbp, using: rates).amount
+        }
+        .reduce(Decimal(0), +)
     }
 
-    func createViewModel(with items: [Product], total: Double) -> ProductTransactionsViewModel {
+    func createViewModel(with items: [Product], total: Decimal) -> ProductTransactionsViewModel {
         let title = String(format: Constants.transactionsTitleFormat, product.sku)
         let totalMoney = Money(amount: total, currency: .gbp)
         let sectionHeader = String(format: Constants.totalSectionHeaderFormat, CurrencyFormatter.format(totalMoney))

@@ -15,10 +15,10 @@ public enum Currency: String, CaseIterable {
 }
 
 public struct Money {
-    public let amount: Double
+    public let amount: Decimal
     public let currency: Currency
-    
-    public init(amount: Double, currency: Currency) {
+
+    public init(amount: Decimal, currency: Currency) {
         self.amount = amount
         self.currency = currency
     }

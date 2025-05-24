@@ -5,18 +5,21 @@
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
+import Foundation
+
 public struct Transaction {
-    public let amount: Double
-    public let currency: String
+    public let money: Money
     public let sku: String
-    
+
     public init?(_ model: TransactionModel) {
-        guard let amount = Double(model.amount) else {
+        guard
+            let amount = Decimal(string: model.amount),
+            let currency = Currency(rawValue: model.currency)
+        else {
             assertionFailure("Invalid amount in model: TransactionModel")
             return nil
         }
-        self.amount = amount
-        self.currency = model.currency
+        self.money = Money(amount: amount, currency: currency)
         self.sku = model.sku
     }
 }

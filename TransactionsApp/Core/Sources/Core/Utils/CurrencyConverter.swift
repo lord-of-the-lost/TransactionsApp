@@ -5,6 +5,8 @@
 //  Created by Николай Игнатов on 22.05.2025.
 //
 
+import Foundation
+
 public enum CurrencyConverter {
     public enum ConversionError: Error {
         case rateNotFound
@@ -15,17 +17,19 @@ public enum CurrencyConverter {
             return money
         }
 
-        // 1. Прямой курс
+        // Прямой курс из money.currency в target
         if let direct = rates.first(where: { $0.from == money.currency.rawValue && $0.to == target.rawValue }) {
-            return Money(amount: money.amount * direct.rate, currency: target)
+            let convertedAmount = money.amount * direct.rate
+            return Money(amount: convertedAmount, currency: target)
         }
 
-        // 2. Обратный курс
+        // Обратный курс из target в money.currency (делим на обратный курс)
         if let reverse = rates.first(where: { $0.from == target.rawValue && $0.to == money.currency.rawValue }) {
-            return Money(amount: money.amount / reverse.rate, currency: target)
+            let convertedAmount = money.amount / reverse.rate
+            return Money(amount: convertedAmount, currency: target)
         }
 
-        // 3. Пробуем найти промежуточную валюту через 1 шаг
+        // Промежуточная конвертация через одну валюту
         for intermediate in Currency.allCases where intermediate != money.currency && intermediate != target {
             guard let toIntermediate = rates.first(where: { $0.from == money.currency.rawValue && $0.to == intermediate.rawValue }),
                   let toTarget = rates.first(where: { $0.from == intermediate.rawValue && $0.to == target.rawValue }) else {
