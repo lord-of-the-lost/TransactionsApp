@@ -13,12 +13,12 @@ public struct Transaction {
 
     public init?(_ model: TransactionModel) {
         guard
-            let amount = Decimal(string: model.amount),
-            let currency = Currency(rawValue: model.currency)
+            let amount = Decimal(string: model.amount)
         else {
             assertionFailure("Invalid amount in model: TransactionModel")
             return nil
         }
+        let currency = Currency(rawValue: model.currency)
         self.money = Money(amount: amount, currency: currency)
         self.sku = model.sku
     }

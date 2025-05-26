@@ -8,7 +8,7 @@
 import Core
 import UIKit
 
-public class ProductsListViewController: UIViewController {
+public final class ProductsListViewController: UIViewController {
     private let presenter: ProductsListPresenterProtocol
     private var products: [ProductItemViewModel] = []
 
@@ -17,7 +17,7 @@ public class ProductsListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(BaseCell.self, forCellReuseIdentifier: BaseCell.identifier)
+        tableView.register(TwoColumnCell.self, forCellReuseIdentifier: TwoColumnCell.identifier)
         return tableView
     }()
 
@@ -49,13 +49,13 @@ extension ProductsListViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let item = products[safe: indexPath.row],
-            let cell = tableView.dequeueReusableCell(withIdentifier: BaseCell.identifier, for: indexPath) as? BaseCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: TwoColumnCell.identifier, for: indexPath) as? TwoColumnCell
         else {
             assertionFailure("Invalid item for cell or BaseCell doesn't provided")
             return UITableViewCell()
         }
       
-        let viewModel = BaseCell.BaseCellViewModel(
+        let viewModel = TwoColumnCell.TwoColumnCellViewModel(
             leftText: item.sku,
             rightText: String(item.count),
             needDisclosureIndicator: true

@@ -8,7 +8,7 @@
 import Core
 import UIKit
 
-public class ProductTransactionsViewController: UIViewController {
+public final class ProductTransactionsViewController: UIViewController {
     private let presenter: ProductTransactionsPresenterProtocol
     private var viewModel: ProductTransactionsViewModel?
 
@@ -18,7 +18,7 @@ public class ProductTransactionsViewController: UIViewController {
         tableView.dataSource = self
         tableView.allowsSelection = false
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(BaseCell.self, forCellReuseIdentifier: BaseCell.identifier)
+        tableView.register(TwoColumnCell.self, forCellReuseIdentifier: TwoColumnCell.identifier)
         return tableView
     }()
 
@@ -50,12 +50,12 @@ extension ProductTransactionsViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard
             let item = viewModel?.items[safe: indexPath.row],
-            let cell = tableView.dequeueReusableCell(withIdentifier: BaseCell.identifier, for: indexPath) as? BaseCell
+            let cell = tableView.dequeueReusableCell(withIdentifier: TwoColumnCell.identifier, for: indexPath) as? TwoColumnCell
         else {
             assertionFailure("Invalid item for cell or BaseCell doesn't provided")
             return UITableViewCell()
         }
-        let viewModel = BaseCell.BaseCellViewModel(
+        let viewModel = TwoColumnCell.TwoColumnCellViewModel(
             leftText: item.originalPrice,
             rightText: item.convertedPrice,
             needDisclosureIndicator: false

@@ -7,11 +7,17 @@
 
 import Foundation
 
-public enum Currency: String, CaseIterable {
-    case gbp = "GBP"
-    case usd = "USD"
-    case cad = "CAD"
-    case aud = "AUD"
+public struct Currency: RawRepresentable, Equatable, Hashable {
+    public let rawValue: String
+
+    public init(rawValue: String) {
+        self.rawValue = rawValue.uppercased()
+    }
+
+    public static let gbp = Currency(rawValue: "GBP")
+    public static let usd = Currency(rawValue: "USD")
+    public static let cad = Currency(rawValue: "CAD")
+    public static let aud = Currency(rawValue: "AUD")
 }
 
 public struct Money {

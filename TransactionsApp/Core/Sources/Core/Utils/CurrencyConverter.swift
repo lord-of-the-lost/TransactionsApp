@@ -30,7 +30,8 @@ public enum CurrencyConverter {
         }
 
         // Промежуточная конвертация через одну валюту
-        for intermediate in Currency.allCases where intermediate != money.currency && intermediate != target {
+        let allCurrencies = Set(rates.flatMap { [Currency(rawValue: $0.from), Currency(rawValue: $0.to)] })
+        for intermediate in allCurrencies where intermediate != money.currency && intermediate != target {
             guard let toIntermediate = rates.first(where: { $0.from == money.currency.rawValue && $0.to == intermediate.rawValue }),
                   let toTarget = rates.first(where: { $0.from == intermediate.rawValue && $0.to == target.rawValue }) else {
                 continue

@@ -1,5 +1,5 @@
 //
-//  BaseCell.swift
+//  TwoColumnCell.swift
 //  Core
 //
 //  Created by Николай Игнатов on 21.05.2025.
@@ -7,8 +7,8 @@
 
 import UIKit
 
-public class BaseCell: UITableViewCell {
-    public static let identifier = BaseCell.description()
+public final class TwoColumnCell: UITableViewCell {
+    public static let identifier = TwoColumnCell.description()
 
     private lazy var leftText: UILabel = {
         let label = UILabel()
@@ -43,7 +43,7 @@ public class BaseCell: UITableViewCell {
         accessoryType = .none
     }
     
-    public func configure(with model: BaseCellViewModel) {
+    public func configure(with model: TwoColumnCellViewModel) {
         leftText.text = model.leftText
         rightText.text = model.rightText
         accessoryType = model.needDisclosureIndicator ? .disclosureIndicator : .none
@@ -51,8 +51,8 @@ public class BaseCell: UITableViewCell {
 }
 
 // MARK: - ViewModel
-extension BaseCell {
-    public struct BaseCellViewModel {
+extension TwoColumnCell {
+    public struct TwoColumnCellViewModel {
         let leftText: String
         let rightText: String
         let needDisclosureIndicator: Bool
@@ -66,7 +66,7 @@ extension BaseCell {
 }
 
 // MARK: - Private Methods
-private extension BaseCell {
+private extension TwoColumnCell {
     func setupView() {
         contentView.addSubview(leftText)
         contentView.addSubview(rightText)
@@ -87,7 +87,7 @@ private extension BaseCell {
 }
 
 // MARK: - Constants
-private extension BaseCell {
+private extension TwoColumnCell {
     enum Constants {
         enum Constraints {
             static let horizontalPadding: CGFloat = 16
