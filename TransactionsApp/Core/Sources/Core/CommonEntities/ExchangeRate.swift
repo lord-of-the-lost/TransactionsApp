@@ -14,7 +14,6 @@ public struct ExchangeRate {
     
     public init?(_ model: ExchangeRateModel) {
         guard let decimalRate = Decimal(string: model.rate) else {
-            assertionFailure("Invalid rate in model: ExchangeRateModel")
             return nil
         }
         self.from = model.from

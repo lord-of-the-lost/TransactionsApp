@@ -15,7 +15,6 @@ public struct Transaction {
         guard
             let amount = Decimal(string: model.amount)
         else {
-            assertionFailure("Invalid amount in model: TransactionModel")
             return nil
         }
         let currency = Currency(rawValue: model.currency)

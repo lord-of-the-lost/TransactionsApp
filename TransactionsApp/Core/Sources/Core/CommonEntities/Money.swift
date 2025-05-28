@@ -18,6 +18,7 @@ public struct Currency: RawRepresentable, Equatable, Hashable {
     public static let usd = Currency(rawValue: "USD")
     public static let cad = Currency(rawValue: "CAD")
     public static let aud = Currency(rawValue: "AUD")
+    public static let eur = Currency(rawValue: "EUR")
 }
 
 public struct Money {
