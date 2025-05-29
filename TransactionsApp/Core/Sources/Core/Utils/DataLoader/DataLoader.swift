@@ -9,40 +9,37 @@ import Foundation
 
 public enum DataLoaderError: Error {
     case fileNotFound
-    case invalidData
     case decodingError
 }
 
-public enum DataLoader {
-    public static func loadTransactions(completion: @escaping (Result<[TransactionModel], DataLoaderError>) -> Void) {
-        loadPlistData(file: Constants.FileName.transactions, completion: completion)
-    }
-    
-    public static func loadExchangeRates(completion: @escaping (Result<[ExchangeRateModel], DataLoaderError>) -> Void) {
-        loadPlistData(file: Constants.FileName.rates, completion: completion)
-    }
-}
+public struct DataLoader {
+    private let bundle: Bundle
+    private let decoder: PropertyListDecoder
 
-// MARK: - Private Methods
-private extension DataLoader {
-    static func loadPlistData<T: Decodable>(
+    public init(bundle: Bundle = .main, decoder: PropertyListDecoder = .init()) {
+        self.bundle = bundle
+        self.decoder = decoder
+    }
+
+    public func load<T: Decodable>(
         file name: String,
+        ext: String = Constants.FileExtension.plist,
         completion: @escaping (Result<T, DataLoaderError>) -> Void
     ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let result: Result<T, DataLoaderError> = {
-                guard let url = Bundle.main.url(forResource: name, withExtension: Constants.FileExtension.plist) else {
+                guard let url = self.bundle.url(forResource: name, withExtension: ext) else {
                     return .failure(.fileNotFound)
                 }
                 do {
                     let data = try Data(contentsOf: url)
-                    let model = try PropertyListDecoder().decode(T.self, from: data)
+                    let model = try self.decoder.decode(T.self, from: data)
                     return .success(model)
                 } catch {
                     return .failure(.decodingError)
                 }
             }()
-            
+
             DispatchQueue.main.async {
                 completion(result)
             }
@@ -51,16 +48,17 @@ private extension DataLoader {
 }
 
 
+
 // MARK: - Constants
-private extension DataLoader {
+public extension DataLoader {
     enum Constants {
-        enum FileExtension {
-            static let plist: String = "plist"
+        public enum FileExtension {
+            public static let plist: String = "plist"
         }
         
-        enum FileName {
-            static let transactions: String = "Transactions"
-            static let rates: String = "Rates"
+        public enum FileName {
+            public static let transactions: String = "Transactions"
+            public static let rates: String = "Rates"
         }
     }
 }

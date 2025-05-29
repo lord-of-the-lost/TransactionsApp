@@ -23,4 +23,4 @@ final class ExchangeRateTests: XCTestCase {
         let exchangeRate = ExchangeRate(model)
         XCTAssertNil(exchangeRate)
     }
-}
+} 

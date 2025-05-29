@@ -10,10 +10,12 @@ import Core
 final class ProductsListPresenter {
     private weak var view: ProductsListViewProtocol?
     private let router: ProductsListRouterProtocol
+    private let dataLoader: DataLoader
     private var products: [ProductItem] = []
-
-    init(router: ProductsListRouterProtocol) {
+    
+    init(router: ProductsListRouterProtocol, dataLoader: DataLoader) {
         self.router = router
+        self.dataLoader = dataLoader
     }
 }
 
@@ -36,7 +38,7 @@ extension ProductsListPresenter: ProductsListPresenterProtocol {
 // MARK: - Private Methods
 private extension ProductsListPresenter {
     func loadTransactions() {
-        DataLoader.loadTransactions { [weak self] result in
+        dataLoader.load(file: DataLoader.Constants.FileName.transactions) { [weak self] (result: Result<[TransactionModel], DataLoaderError>) in
             guard let self else { return }
             switch result {
             case .success(let models):

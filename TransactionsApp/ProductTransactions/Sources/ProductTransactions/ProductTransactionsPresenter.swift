@@ -8,15 +8,23 @@
 import Core
 import Foundation
 
+import Foundation
+
 final class ProductTransactionsPresenter {
     private weak var view: ProductTransactionsViewProtocol?
     private let router: ProductTransactionsRouterProtocol
-    private var rates: [ExchangeRate] = []
+    private let dataLoader: DataLoader
     private let product: ProductItem
-    
-    init(router: ProductTransactionsRouterProtocol, product: ProductItem) {
+    private var rates: [ExchangeRate] = []
+
+    init(
+        router: ProductTransactionsRouterProtocol,
+        product: ProductItem,
+        dataLoader: DataLoader
+    ) {
         self.router = router
         self.product = product
+        self.dataLoader = dataLoader
     }
 }
 
@@ -25,11 +33,11 @@ extension ProductTransactionsPresenter: ProductTransactionsPresenterProtocol {
     func setupView(_ view: ProductTransactionsViewProtocol) {
         self.view = view
     }
-    
+
     func viewDidLoad() {
         loadData()
     }
-    
+
     func updateView(with model: ProductTransactionsViewModel) {
         view?.updateView(model)
     }
@@ -40,11 +48,11 @@ private extension ProductTransactionsPresenter {
     typealias Product = ProductTransactionsViewModel.ProductTransactionItem
 
     func loadData() {
-        DataLoader.loadExchangeRates { [weak self] result in
+        dataLoader.load(file: DataLoader.Constants.FileName.rates) { [weak self] (result: Result<[ExchangeRateModel], DataLoaderError>) in
             guard let self else { return }
             switch result {
-            case .success(let rates):
-                self.rates = rates.compactMap(ExchangeRate.init)
+            case .success(let models):
+                self.rates = models.compactMap(ExchangeRate.init)
                 self.updateTransactions()
             case .failure(let error):
                 self.view?.showError(error)
@@ -59,7 +67,7 @@ private extension ProductTransactionsPresenter {
         view?.updateView(viewModel)
     }
 
-    func createViewModelItem(from transaction: Transaction) -> ProductTransactionsViewModel.ProductTransactionItem? {
+    func createViewModelItem(from transaction: Transaction) -> Product? {
         let originalMoney = transaction.money
         let originalPrice = CurrencyFormatter.format(originalMoney)
 
@@ -73,10 +81,7 @@ private extension ProductTransactionsPresenter {
 
         let convertedPrice = CurrencyFormatter.format(convertedMoney)
 
-        return ProductTransactionsViewModel.ProductTransactionItem(
-            originalPrice: originalPrice,
-            convertedPrice: convertedPrice
-        )
+        return Product(originalPrice: originalPrice, convertedPrice: convertedPrice)
     }
 
     func calculateTotal(from transactions: [Transaction]) -> Decimal {
