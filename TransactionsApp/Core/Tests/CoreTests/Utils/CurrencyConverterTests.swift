@@ -19,6 +19,16 @@ final class CurrencyConverterTests: XCTestCase {
         XCTAssertEqual(result.currency, .eur)
     }
 
+    func testSameCurrencyConversion() throws {
+        let money = Money(amount: 100, currency: .usd)
+        let model = ExchangeRateModel(from: "USD", to: "EUR", rate: "0.85")
+        let exchangeRate = ExchangeRate(model)!
+        let rates = [exchangeRate]
+        let result = try CurrencyConverter.convert(money, to: .usd, using: rates)
+        XCTAssertEqual(result.amount, money.amount)
+        XCTAssertEqual(result.currency, money.currency)
+    }
+
     func testReverseConversion() throws {
         let money = Money(amount: 100, currency: .eur)
         let model = ExchangeRateModel(from: "USD", to: "EUR", rate: "0.85")
@@ -46,6 +56,18 @@ final class CurrencyConverterTests: XCTestCase {
         let model = ExchangeRateModel(from: "EUR", to: "GBP", rate: "0.85")
         let exchangeRate = ExchangeRate(model)!
         let rates = [exchangeRate]
+        XCTAssertThrowsError(try CurrencyConverter.convert(money, to: .eur, using: rates)) { error in
+            XCTAssertEqual(error as? CurrencyConverter.ConversionError, .rateNotFound)
+        }
+    }
+
+    func testNoConversionPathFound() {
+        let money = Money(amount: 100, currency: .usd)
+        let model1 = ExchangeRateModel(from: "EUR", to: "GBP", rate: "0.85")
+        let model2 = ExchangeRateModel(from: "CAD", to: "AUD", rate: "1.1")
+        let exchangeRate1 = ExchangeRate(model1)!
+        let exchangeRate2 = ExchangeRate(model2)!
+        let rates = [exchangeRate1, exchangeRate2]
         XCTAssertThrowsError(try CurrencyConverter.convert(money, to: .eur, using: rates)) { error in
             XCTAssertEqual(error as? CurrencyConverter.ConversionError, .rateNotFound)
         }
