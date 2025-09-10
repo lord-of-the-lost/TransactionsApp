@@ -5,8 +5,9 @@
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
-import Core
+@preconcurrency import Core
 
+@MainActor
 final class ProductsListPresenter {
     private weak var view: ProductsListViewProtocol?
     private let router: ProductsListRouterProtocol
@@ -40,21 +41,27 @@ private extension ProductsListPresenter {
     func loadTransactions() {
         dataLoader.load(file: DataLoader.Constants.FileName.transactions) { [weak self] (result: Result<[TransactionModel], DataLoaderError>) in
             guard let self else { return }
+
             switch result {
             case .success(let models):
                 let transactions = models.compactMap(Transaction.init)
-                self.products = groupTransactionsBySKU(transactions)
-                self.updateProductsList()
+                
+                Task { @MainActor in
+                    self.products = groupTransactionsBySKU(transactions)
+                    self.updateProductsList()
+                }
+
             case .failure(let error):
-                self.view?.showError(error)
+                Task { @MainActor in
+                    self.view?.showError(error)
+                }
             }
         }
     }
 
     func groupTransactionsBySKU(_ transactions: [Transaction]) -> [ProductItem] {
-        let grouped = Dictionary(grouping: transactions, by: { $0.sku })
-        return grouped.map { ProductItem(sku: $0.key, transactions: $0.value) }
-            .sorted { $0.sku.localizedCompare($1.sku) == .orderedAscending }
+        Dictionary(grouping: transactions, by: { $0.sku })
+            .map { ProductItem(sku: $0.key, transactions: $0.value) }
     }
 
     func updateProductsList() {

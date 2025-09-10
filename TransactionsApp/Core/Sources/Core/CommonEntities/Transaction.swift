@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Transaction {
+public struct Transaction: Sendable {
     public let money: Money
     public let sku: String
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ExchangeRateModel: Decodable {
+public struct ExchangeRateModel: Decodable, Sendable {
     let from: String
     let to: String
     let rate: String

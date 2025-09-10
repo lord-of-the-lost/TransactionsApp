@@ -8,6 +8,7 @@
 import Core
 import UIKit
 
+@MainActor
 public final class ProductsListViewController: UIViewController {
     private let presenter: ProductsListPresenterProtocol
     private var products: [ProductItemViewModel] = []

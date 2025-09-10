@@ -20,6 +20,7 @@ struct ProductTransactionsViewModel {
 }
 
 // MARK: Presenter
+@MainActor
 protocol ProductTransactionsPresenterProtocol: AnyObject {
     func setupView(_ view: ProductTransactionsViewProtocol)
     func viewDidLoad()
@@ -27,12 +28,14 @@ protocol ProductTransactionsPresenterProtocol: AnyObject {
 }
 
 // MARK: Controller
+@MainActor
 protocol ProductTransactionsViewProtocol: AnyObject {
     func updateView(_ model: ProductTransactionsViewModel)
     func showError(_ error: Error)
 }
 
 // MARK: Router
+@MainActor
 protocol ProductTransactionsRouterProtocol: AnyObject {
     func close()
 }

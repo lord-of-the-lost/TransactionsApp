@@ -12,7 +12,7 @@ public enum DataLoaderError: Error {
     case decodingError
 }
 
-public struct DataLoader {
+public struct DataLoader: Sendable {
     private let bundle: Bundle
     private let decoder: PropertyListDecoder
 
@@ -21,10 +21,10 @@ public struct DataLoader {
         self.decoder = decoder
     }
 
-    public func load<T: Decodable>(
+    public func load<T: Decodable & Sendable>(
         file name: String,
         ext: String = Constants.FileExtension.plist,
-        completion: @escaping (Result<T, DataLoaderError>) -> Void
+        completion: @escaping @Sendable (Result<T, DataLoaderError>) -> Void
     ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let result: Result<T, DataLoaderError> = {

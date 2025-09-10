@@ -8,8 +8,7 @@
 import Core
 import Foundation
 
-import Foundation
-
+@MainActor
 final class ProductTransactionsPresenter {
     private weak var view: ProductTransactionsViewProtocol?
     private let router: ProductTransactionsRouterProtocol
@@ -46,20 +45,30 @@ extension ProductTransactionsPresenter: ProductTransactionsPresenterProtocol {
 // MARK: - Private Methods
 private extension ProductTransactionsPresenter {
     typealias Product = ProductTransactionsViewModel.ProductTransactionItem
-
+    
+    @MainActor
     func loadData() {
         dataLoader.load(file: DataLoader.Constants.FileName.rates) { [weak self] (result: Result<[ExchangeRateModel], DataLoaderError>) in
             guard let self else { return }
+
             switch result {
             case .success(let models):
-                self.rates = models.compactMap(ExchangeRate.init)
-                self.updateTransactions()
+                let rates = models.compactMap(ExchangeRate.init)
+                
+                Task { @MainActor in
+                    self.rates = rates
+                    self.updateTransactions()
+                }
+
             case .failure(let error):
-                self.view?.showError(error)
+                Task { @MainActor in
+                    self.view?.showError(error)
+                }
             }
         }
     }
 
+    @MainActor
     func updateTransactions() {
         let items = product.transactions.compactMap { createViewModelItem(from: $0) }
         let total = calculateTotal(from: product.transactions)

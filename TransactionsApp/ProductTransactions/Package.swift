@@ -17,7 +17,10 @@ let package = Package(
     targets: [
         .target(
             name: "ProductTransactions",
-            dependencies: [.product(name: "Core", package: "Core")]
+            dependencies: [.product(name: "Core", package: "Core")],
+            swiftSettings: [
+                .enableExperimentalFeature("StrictConcurrency")
+            ]
         )
     ]
 )

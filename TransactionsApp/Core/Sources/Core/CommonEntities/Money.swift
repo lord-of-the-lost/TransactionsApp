@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Currency: RawRepresentable, Equatable, Hashable {
+public struct Currency: RawRepresentable, Equatable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -21,7 +21,7 @@ public struct Currency: RawRepresentable, Equatable, Hashable {
     public static let eur = Currency(rawValue: "EUR")
 }
 
-public struct Money {
+public struct Money: Sendable {
     public let amount: Decimal
     public let currency: Currency
 

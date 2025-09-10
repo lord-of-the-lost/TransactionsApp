@@ -8,6 +8,7 @@
 import Core
 import UIKit
 
+@MainActor
 public enum ProductTransactionsAssembly {
     public static func assembly(product: ProductItem) -> ProductTransactionsViewController {
         let router = ProductTransactionsRouter()

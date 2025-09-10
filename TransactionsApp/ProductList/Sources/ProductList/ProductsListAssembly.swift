@@ -7,8 +7,9 @@
 
 import Core
 
+@MainActor
 public enum ProductsListAssembly {
-    public static func assembly() -> ProductsListViewController {
+     public static func assembly() -> ProductsListViewController {
         let router = ProductsListRouter()
         let dataLoader = DataLoader()
         let presenter = ProductsListPresenter(router: router, dataLoader: dataLoader)

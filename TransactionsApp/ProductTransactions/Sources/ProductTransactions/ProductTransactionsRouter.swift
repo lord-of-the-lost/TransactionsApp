@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 final class ProductTransactionsRouter {
     weak var viewController: UIViewController?
 }
