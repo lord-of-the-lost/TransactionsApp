@@ -5,7 +5,7 @@
 //  Created by Николай Игнатов on 21.05.2025.
 //
 
-@preconcurrency import Core
+import Core
 
 @MainActor
 final class ProductsListPresenter {
